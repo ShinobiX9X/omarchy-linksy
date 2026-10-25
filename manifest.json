@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "io.github.shinobix9x.linksy",
+  "name": "Linksy",
+  "version": "1.0.0",
+  "author": "ShinobiX9X",
+  "description": "The paired phone's battery in the bar while it is on the same network, with ring, clipboard, files and send on click",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "LinksyWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Linksy",
+    "description": "Nearby paired phone and its battery; hidden while none is nearby",
+    "category": "Devices",
+    "allowMultiple": false,
+    "defaultSection": "center"
+  }
+}
