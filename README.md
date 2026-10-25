@@ -18,7 +18,7 @@ Right-click opens Linksy. The widget hides when no paired phone is around, and s
 
 - Omarchy with the Quickshell bar ("Quattro")
 - [Linksy](https://linksy.diary.mg) 0.9.9 or newer, with the `linksyd` service running and a phone paired
-- `zenity`, only for **Send files…** (`omarchy pkg add zenity`)
+- The `zenity` package, only for **Send files…**
 
 `jq`, `python3` and `wl-clipboard` come with Omarchy.
 

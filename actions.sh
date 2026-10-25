@@ -16,7 +16,7 @@ case $1 in
     ;;
   send)
     if ! command -v zenity >/dev/null; then
-      omarchy-notification-send -g "󰄜" "Linksy" "Sending files needs zenity: omarchy pkg add zenity"
+      omarchy-notification-send -g "󰄜" "Linksy" "Sending files needs the zenity package. Install it, then try again."
       exit 1
     fi
     mapfile -t files < <(zenity --file-selection --multiple --separator=$'\n' --title="Send to phone" 2>/dev/null)
