@@ -355,7 +355,7 @@ Panel {
           iconText: root.ringing ? "󰂛" : "󰂞"
           text: root.ringing ? "Stop ringing" : "Ring phone"
           onClicked: {
-            root.bar.run("linksy ring '" + root.phoneId + "'" + (root.ringing ? " --stop" : ""))
+            root.bar.run("'" + root.actions + "' ring '" + root.phoneId + "'" + (root.ringing ? " --stop" : ""))
             root.ringing = !root.ringing
           }
         }
@@ -372,7 +372,7 @@ Panel {
         ActionButton {
           iconText: "󰉋"
           text: "Browse phone files"
-          onClicked: root.act("linksy files '" + root.phoneId + "'")
+          onClicked: root.act("'" + root.actions + "' files '" + root.phoneId + "'")
         }
         ActionButton {
           visible: true
