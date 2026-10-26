@@ -67,13 +67,13 @@ If the bar still shows the old widget after an update, restart the shell with `o
 
 ## Privacy
 
-Linksy keeps its data, such as clipboard files from your phone, in `~/.local/share/linksy`. On a computer with more than one account, make sure the others can't open that folder:
+Linksy keeps its data, such as clipboard files from your phone, in its data folder: `$XDG_DATA_HOME/linksy`, which is `~/.local/share/linksy` unless you changed it (or the folder given to `linksyd --data-dir`). On a computer with more than one account, close that folder to everyone else, including shared groups:
 
 ```bash
-chmod 700 ~/.local/share/linksy
+chmod 700 "${XDG_DATA_HOME:-$HOME/.local/share}/linksy"
 ```
 
-Arch's default home folder (`0700`) already does this. `check.sh` warns, once, when the folder is open. The widget itself reads only Linksy's service socket, which is private to you.
+Do this whether or not you see a warning. `check.sh` warns once when it finds the folder open, looking at the folder the running `linksyd` uses and at permissions for other accounts and shared groups, but it can't see every setup (ACLs, for example). The widget itself reads only Linksy's service socket, which is private to you.
 
 ## License
 

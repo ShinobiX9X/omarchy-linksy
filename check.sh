@@ -66,13 +66,39 @@ report() { # report <exit code> <version> <problem>...
 }
 
 # Linksy's data folder (clipboard files from the phone, among others) should stay private.
-# Other accounts can open it when every folder on the way lets them through (o+x).
-data=${XDG_DATA_HOME:-$HOME/.local/share}/linksy
+# The folder the running linksyd uses: its --data-dir, else its $XDG_DATA_HOME/linksy.
+data_dir() {
+  local pid arg prev xdg=
+  pid=$(pgrep -u "$UID" -x linksyd | head -1)
+  if [[ -n $pid ]]; then
+    while IFS= read -r -d '' arg; do
+      [[ $prev == --data-dir ]] && { echo "$arg"; return; }
+      prev=$arg
+    done </proc/"$pid"/cmdline
+    xdg=$(tr '\0' '\n' </proc/"$pid"/environ | sed -n 's/^XDG_DATA_HOME=//p')
+  else
+    xdg=$XDG_DATA_HOME
+  fi
+  echo "${xdg:-$HOME/.local/share}/linksy"
+}
+
+# Whether a group has members besides this account and root (listed or primary)
+shared_group() {
+  local me
+  me=$(id -un)
+  getent group "$1" | cut -d: -f4 | tr ',' '\n' | grep -qvxE "|$me|root" && return 0
+  getent passwd | awk -F: -v g="$1" -v me="$me" '$4 == g && $1 != me && $1 != "root" { found = 1 } END { exit !found }'
+}
+
+# Other accounts can open the folder when every folder on the way lets them through:
+# execute for others, or for a group they share.
+data=$(data_dir)
 warnings=()
 if [[ -d $data ]]; then
   open=true path=$data
   while :; do
-    (( 8#$(stat -c %a "$path") & 1 )) || { open=false; break; }
+    read -r mode gid < <(stat -c '%a %g' "$path")
+    (( 8#$mode & 1 )) || { (( 8#$mode & 8 )) && shared_group "$gid"; } || { open=false; break; }
     [[ $path == / ]] && break
     path=$(dirname "$path")
   done
