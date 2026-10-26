@@ -65,9 +65,8 @@ report() { # report <exit code> <version> <problem>...
   exit "$code"
 }
 
-# Linksy keeps clipboard files from the phone and paired devices' keys in its data folder,
-# with default permissions. Other accounts can open it when every folder on the way lets
-# them through (o+x).
+# Linksy's data folder (clipboard files from the phone, among others) should stay private.
+# Other accounts can open it when every folder on the way lets them through (o+x).
 data=${XDG_DATA_HOME:-$HOME/.local/share}/linksy
 warnings=()
 if [[ -d $data ]]; then
@@ -77,7 +76,7 @@ if [[ -d $data ]]; then
     [[ $path == / ]] && break
     path=$(dirname "$path")
   done
-  $open && warnings+=("Other accounts on this computer can open Linksy's data folder ($data), with clipboard files from the phone and paired devices' keys. Close it with: chmod 700 $data")
+  $open && warnings+=("Other accounts on this computer can open Linksy's data folder ($data). Close it with: chmod 700 $data")
 fi
 warnings_json() {
   ((${#warnings[@]})) || { echo '[]'; return; }

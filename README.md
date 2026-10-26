@@ -67,7 +67,7 @@ If the bar still shows the old widget after an update, restart the shell with `o
 
 ## Privacy
 
-Linksy keeps clipboard files from your phone and your paired devices' keys in `~/.local/share/linksy`, with default permissions. On a computer with more than one account, close that folder to the others:
+Linksy keeps its data, such as clipboard files from your phone, in `~/.local/share/linksy`. On a computer with more than one account, make sure the others can't open that folder:
 
 ```bash
 chmod 700 ~/.local/share/linksy
