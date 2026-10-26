@@ -2,7 +2,8 @@
 # Does this widget still fit the installed Linksy? Tests what the widget relies on:
 # linksyd's socket and its `devices` reply, the event names it reacts to, and the
 # `linksy` CLI commands its popup runs. The widget runs it (with --json --notify)
-# whenever it meets a Linksy version it hasn't checked yet.
+# whenever it meets a Linksy version it hasn't checked yet. It also warns, without
+# failing, when other accounts can open Linksy's data folder.
 #
 #   check.sh            test and print the result (exit 0 = fits, 1 = changed, 2 = can't tell)
 #   check.sh --json     print the result as one JSON object instead
@@ -30,7 +31,7 @@ report() { # report <exit code> <version> <problem>...
   local code=$1 version=$2
   shift 2
   local result
-  result=$(jq -cn --arg v "$version" --argjson code "$code" '{version: $v, fits: ($code == 0), unknown: ($code == 2), problems: $ARGS.positional}' --args "$@")
+  result=$(jq -cn --arg v "$version" --argjson code "$code" --argjson w "$(warnings_json)" '{version: $v, fits: ($code == 0), unknown: ($code == 2), problems: $ARGS.positional, warnings: $w}' --args "$@")
   ((code < 2)) && echo "$result" >"$state/result-$version.json"
 
   if $json; then
@@ -45,6 +46,16 @@ report() { # report <exit code> <version> <problem>...
     echo "Update the widget with: omarchy plugin update $id"
     echo "No fix yet? Report it, with this list, where the widget came from (see its README)."
   fi
+  if ! $json && ((${#warnings[@]})); then
+    printf 'Warning: %s\n' "${warnings[@]}"
+  fi
+
+  if $notify && ((${#warnings[@]})) && [[ ! -f $state/warned ]]; then
+    touch "$state/warned"
+    omarchy-notification-send -g "󰄜" "Linksy's data folder is open to other accounts" \
+      "Close it with: chmod 700 $data" >/dev/null 2>&1
+  fi
+  ((${#warnings[@]})) || rm -f "$state/warned"
 
   if $notify && ((code == 1)) && [[ $(cat "$state/notified" 2>/dev/null) != "$version" ]]; then
     echo "$version" >"$state/notified"
@@ -52,6 +63,25 @@ report() { # report <exit code> <version> <problem>...
       "$# change(s). Update the widget: omarchy plugin update $id" >/dev/null 2>&1
   fi
   exit "$code"
+}
+
+# Linksy keeps clipboard files from the phone and paired devices' keys in its data folder,
+# with default permissions. Other accounts can open it when every folder on the way lets
+# them through (o+x).
+data=${XDG_DATA_HOME:-$HOME/.local/share}/linksy
+warnings=()
+if [[ -d $data ]]; then
+  open=true path=$data
+  while :; do
+    (( 8#$(stat -c %a "$path") & 1 )) || { open=false; break; }
+    [[ $path == / ]] && break
+    path=$(dirname "$path")
+  done
+  $open && warnings+=("Other accounts on this computer can open Linksy's data folder ($data), with clipboard files from the phone and paired devices' keys. Close it with: chmod 700 $data")
+fi
+warnings_json() {
+  ((${#warnings[@]})) || { echo '[]'; return; }
+  jq -cn '$ARGS.positional' --args "${warnings[@]}"
 }
 
 command -v linksy >/dev/null || report 2 "" "Linksy isn't installed (no linksy command)"

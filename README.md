@@ -65,6 +65,16 @@ Then:
 
 If the bar still shows the old widget after an update, restart the shell with `omarchy restart shell`.
 
+## Privacy
+
+Linksy keeps clipboard files from your phone and your paired devices' keys in `~/.local/share/linksy`, with default permissions. On a computer with more than one account, close that folder to the others:
+
+```bash
+chmod 700 ~/.local/share/linksy
+```
+
+Arch's default home folder (`0700`) already does this. `check.sh` warns, once, when the folder is open. The widget itself reads only Linksy's service socket, which is private to you.
+
 ## License
 
 [MIT](LICENSE)
