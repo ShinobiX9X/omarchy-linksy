@@ -9,7 +9,6 @@ While your paired phone is on the same network, the bar shows it with its batter
 - **Ring phone**, to find it
 - **Send clipboard**, to send this computer's copied text to the phone
 - **Send files…**
-- **Browse phone files**
 - **Open Linksy**
 
 Right-click opens Linksy. The widget hides when no paired phone is around, and shows transfer progress (`󰓢 42%`) while files are moving.

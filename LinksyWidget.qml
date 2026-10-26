@@ -370,11 +370,6 @@ Panel {
           onClicked: root.act("'" + root.actions + "' send '" + root.phoneId + "'")
         }
         ActionButton {
-          iconText: "󰉋"
-          text: "Browse phone files"
-          onClicked: root.act("'" + root.actions + "' files '" + root.phoneId + "'")
-        }
-        ActionButton {
           visible: true
           iconText: "󰏌"
           text: "Open Linksy"

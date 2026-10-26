@@ -3,7 +3,6 @@
 # message as a notification instead of failing silently in the background.
 #   actions.sh clip <device>          send this computer's clipboard text
 #   actions.sh send <device>          pick files and send them
-#   actions.sh files <device>         open the phone's files in the file manager
 #   actions.sh ring <device> [--stop] make the phone ring, or stop it
 device=$2
 
@@ -37,9 +36,6 @@ case $1 in
     mapfile -t files < <(zenity --file-selection --multiple --separator=$'\n' --title="Send to phone" 2>/dev/null)
     ((${#files[@]})) || exit 0
     linksy_or_notify send "$device" "${files[@]}"
-    ;;
-  files)
-    linksy_or_notify files "$device"
     ;;
   ring)
     linksy_or_notify ring "$device" ${3:+"$3"}

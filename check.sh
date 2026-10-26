@@ -130,7 +130,7 @@ done
 
 # CLI commands the popup runs
 help=$(linksy --help 2>&1)
-for cmd in "linksy ring <device> [--stop]" "linksy clip <device>" "linksy send <device>" "linksy files <phone>"; do
+for cmd in "linksy ring <device> [--stop]" "linksy clip <device>" "linksy send <device>"; do
   grep -qF "$cmd" <<<"$help" || problems+=("\`linksy --help\` no longer lists \"$cmd\"")
 done
 
